@@ -19,9 +19,9 @@ Ce projet implémente une serre intelligente avec **4 zones indépendantes** de 
 
 | Composant | Technologie |
 |---|---|
+| Microcontrôleur | Arduino Mega (C++ / Arduino IDE) |
 | Traitement des flows | Node-RED |
 | Base de données | InfluxDB 2.0 (Cloud) |
-| Microcontrôleur | Arduino (communication série) |
 | API météo | OpenWeatherMap |
 | Dashboard | Node-RED Dashboard (ui_gauge, ui_chart) |
 
@@ -34,9 +34,8 @@ Ce projet implémente une serre intelligente avec **4 zones indépendantes** de 
 
 ### 2. Import des flows
 
-Importer les fichiers JSON dans Node-RED :
-- `greenhouse-main-flows.json` — flows principaux (zones 1-4 + météo)
-- `greenhouse-zone1-flows.json` — flow zone 1 (version modifiée)
+Importer le fichier JSON dans Node-RED :
+- `flux_node_red.json` — flows principaux (zones + météo + dashboard)
 
 ### 3. Variables à configurer
 
@@ -60,8 +59,8 @@ Country : votre pays
 ## Structure du projet
 
 ```
-├── greenhouse-main-flows.json    # Flows Node-RED principaux (zones 1-4 + météo)
-├── greenhouse-zone1-flows.json   # Flow zone 1 (version modifiée)
+├── Final_Code.cpp                # Code Arduino (capteurs + actionneurs)
+├── flux_node_red.json            # Flows Node-RED (zones + météo + dashboard)
 ├── project-report.pdf            # Rapport complet du projet
 ├── iot-project-report.html       # Page web du projet
 └── README.md                     # Ce fichier
@@ -70,15 +69,19 @@ Country : votre pays
 ## Architecture
 
 ```
-Arduino (capteurs) 
-    → Serial In (Node-RED)
-        → Switch (routing par type)
-            ├── Température → InfluxDB (valeur idéale) → Thermostat
-            ├── Humidité    → InfluxDB (valeur idéale) → Pompe
-            ├── Luminosité  → InfluxDB (valeur idéale) → Éclairage
-            └── Insectes    → InfluxDB (insectes connus) → Alerte
+Arduino Mega (Final_Code.cpp)
+    Capteurs : DHT11 (air + sol), photorésistance, PIR + son
+    Actionneurs locaux : ventilateur, LEDs, servo (dôme), stepper (irrigation)
+    → Serial (CSV) : temp,hum_air,hum_sol,luminosité,bugs,dome,irrigation\n
+
+Node-RED (flux_node_red.json)
+    → Serial In → Function (parser CSV)
+        → Switch (routing par topic)
+            ├── temperature  → InfluxDB (valeur idéale) → Thermostat
+            ├── soilHumidity → InfluxDB (valeur idéale) → Pompe
+            ├── luminosity   → InfluxDB (valeur idéale) → Éclairage
+            └── insect       → InfluxDB (nuisibles connus) → Alerte
 
 OpenWeatherMap API
-    → Conditions météo
-        → Contrôle dôme (ouvert si ciel dégagé)
+    → Conditions météo → Contrôle dôme (ouvert si ciel dégagé)
 ```

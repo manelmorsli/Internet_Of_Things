@@ -256,7 +256,7 @@ caption {
   <div class="cover-rule"></div>
   <div class="meta">
     Réalisé par : <span>MORSLI Manel</span><br>
-    Technologies : <span>Node-RED · Arduino · InfluxDB 2.0 · OpenWeatherMap</span><br>
+    Technologies : <span>Arduino Mega · Node-RED · InfluxDB 2.0 · OpenWeatherMap</span><br>
     Localisation : <span>Tizi-Ouzou, Algérie</span>
   </div>
 </div>
@@ -273,11 +273,12 @@ caption {
     <li class="toc-sub"><span class="num">II.</span><span>Architecture générale du système</span><span class="page">3</span></li>
     <li class="toc-sub"><span class="num">III.</span><span>Les 4 zones de la serre</span><span class="page">4</span></li>
     <li class="toc-part" style="margin-top:.8rem"><span class="num"></span><span>Partie II — Implémentation</span><span class="page">5</span></li>
-    <li class="toc-sub"><span class="num">IV.</span><span>Flows Node-RED — traitement des capteurs</span><span class="page">5</span></li>
-    <li class="toc-sub"><span class="num">V.</span><span>Base de données InfluxDB</span><span class="page">7</span></li>
-    <li class="toc-sub"><span class="num">VI.</span><span>Dashboard et interface utilisateur</span><span class="page">8</span></li>
-    <li class="toc-sub"><span class="num">VII.</span><span>Intégration météo et contrôle du dôme</span><span class="page">9</span></li>
-    <li class="toc-sub"><span class="num">VIII.</span><span>Conclusion et perspectives</span><span class="page">10</span></li>
+    <li class="toc-sub"><span class="num">IV.</span><span>Code Arduino — perception et contrôle local</span><span class="page">5</span></li>
+    <li class="toc-sub"><span class="num">V.</span><span>Flows Node-RED — traitement et routage des données</span><span class="page">6</span></li>
+    <li class="toc-sub"><span class="num">VI.</span><span>Base de données InfluxDB</span><span class="page">8</span></li>
+    <li class="toc-sub"><span class="num">VII.</span><span>Dashboard et interface utilisateur</span><span class="page">9</span></li>
+    <li class="toc-sub"><span class="num">VIII.</span><span>Intégration météo et contrôle du dôme</span><span class="page">10</span></li>
+    <li class="toc-sub"><span class="num">IX.</span><span>Conclusion et perspectives</span><span class="page">11</span></li>
   </ol>
 </div>
 
@@ -313,7 +314,7 @@ caption {
 <div class="metrics-row">
   <div class="metric-box"><span class="val">4</span><span class="lbl">zones indépendantes<br>de culture</span></div>
   <div class="metric-box"><span class="val">4</span><span class="lbl">types de capteurs<br>par zone</span></div>
-  <div class="metric-box"><span class="val">3</span><span class="lbl">actionneurs<br>automatiques</span></div>
+  <div class="metric-box"><span class="val">5</span><span class="lbl">actionneurs<br>(ventilateur, LEDs, servo, stepper)</span></div>
   <div class="metric-box"><span class="val">2</span><span class="lbl">buckets InfluxDB<br>dédiés</span></div>
 </div>
 
@@ -329,7 +330,7 @@ caption {
 <table>
   <thead><tr><th>Couche</th><th>Composant</th><th>Rôle</th></tr></thead>
   <tbody>
-    <tr><td>Perception</td><td><strong>Arduino</strong></td><td>Lecture des capteurs, envoi série au format <code>topic:valeur\n</code></td></tr>
+    <tr><td>Perception</td><td><strong>Arduino Mega</strong></td><td>Lecture des capteurs, contrôle local des actionneurs, envoi série CSV : <code>temp,hum_air,hum_sol,luminosité,bugs,dome,irrigation\n</code></td></tr>
     <tr><td>Traitement</td><td><strong>Node-RED</strong></td><td>Parsing, logique métier, comparaison aux valeurs idéales, pilotage des actionneurs</td></tr>
     <tr><td>Données</td><td><strong>InfluxDB 2.0 Cloud</strong></td><td>Stockage time-series des mesures et des valeurs idéales par plante</td></tr>
     <tr><td>Météo</td><td><strong>OpenWeatherMap API</strong></td><td>Données météo locales pour le contrôle du dôme</td></tr>
@@ -340,9 +341,11 @@ caption {
 
 <div class="callout info">
   <div class="callout-title">Protocole de communication Arduino → Node-RED</div>
-  Chaque Arduino envoie ses mesures via le port série sous la forme <code>topic:valeur\n</code>.
-  Exemples : <code>temperature:23\n</code>, <code>soilHumidity:65\n</code>, <code>luminosity:7000\n</code>, <code>insect:1\n</code>.
-  Node-RED parse ce format grâce à un nœud <em>function</em> qui extrait le topic et la valeur numérique.
+  Chaque Arduino envoie ses mesures via le port série (9600 baud) sous forme de valeurs séparées par des virgules (CSV) :
+  <code>température,humidité_air,humidité_sol,luminosité,insectes,dôme,irrigation\n</code>.
+  Exemple : <code>23.5,65.2,58.1,750,0,1,0,\n</code>.
+  Node-RED parse ce format grâce à un nœud <em>function</em> qui découpe la chaîne et crée des messages distincts
+  avec les topics <code>temperature</code>, <code>soilHumidity</code>, <code>luminosity</code> et <code>insect</code>.
 </div>
 
 
@@ -379,7 +382,51 @@ caption {
 ══════════════════════════════════════════════════════ -->
 <h1 class="part-title page-break">Partie II — Implémentation</h1>
 
-<h2 class="section" data-n="IV">Flows Node-RED — traitement des capteurs</h2>
+<h2 class="section" data-n="IV">Code Arduino — couche de perception et contrôle local</h2>
+
+<p>
+  Le fichier <code>Final_Code.cpp</code> est flashé sur un <strong>Arduino Mega 2560</strong>.
+  Il assure deux responsabilités : la lecture des capteurs et un <strong>contrôle local en boucle ouverte</strong>
+  basé sur des seuils fixes, indépendamment de Node-RED.
+</p>
+
+<h3 class="subsection">Capteurs connectés</h3>
+
+<table>
+  <thead><tr><th>Capteur</th><th>Pin</th><th>Variable mesurée</th></tr></thead>
+  <tbody>
+    <tr><td>DHT11 (air)</td><td>D2</td><td>Température de l'air, humidité de l'air</td></tr>
+    <tr><td>DHT11 (sol)</td><td>D4</td><td>Humidité du sol</td></tr>
+    <tr><td>Capteur son</td><td>A0</td><td>Niveau sonore (détection d'insectes)</td></tr>
+    <tr><td>Détecteur PIR</td><td>D3</td><td>Mouvement (couplé au son pour la détection d'insectes)</td></tr>
+    <tr><td>Photorésistance</td><td>A12</td><td>Luminosité ambiante (0–1023)</td></tr>
+  </tbody>
+  <caption>Table 3 — Capteurs du système Arduino</caption>
+</table>
+
+<h3 class="subsection">Actionneurs connectés</h3>
+
+<table>
+  <thead><tr><th>Actionneur</th><th>Pin(s)</th><th>Rôle</th></tr></thead>
+  <tbody>
+    <tr><td>Ventilateur (moteur DC)</td><td>D6 (PWM)</td><td>Activé si température &gt; <code>TEMP_Max</code> (24 °C)</td></tr>
+    <tr><td>LEDs chauffantes</td><td>D12, D13</td><td>Activées si température &lt; <code>TEMP_Min</code> (24 °C)</td></tr>
+    <tr><td>LEDs luminosité</td><td>D10, D11</td><td>Activées si luminosité hors plage [40 % – 70 %]</td></tr>
+    <tr><td>Servo moteur (dôme)</td><td>D5</td><td>Ouverture/fermeture du dôme de la serre (0° – 120°)</td></tr>
+    <tr><td>Moteur pas à pas (irrigation)</td><td>D22, D24, D26, D28</td><td>Pompe à eau ; activée si humidité sol &lt; <code>HUMID_Min</code> (50 %)</td></tr>
+  </tbody>
+  <caption>Table 4 — Actionneurs du système Arduino</caption>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Sortie série (CSV)</div>
+  À chaque itération de <code>loop()</code> (délai 100 ms), l'Arduino publie une ligne CSV sur le port série 9600 baud :
+  <code>température,humidité_air,humidité_sol,luminosité,bugs,dome,irrigation,\n</code>.
+  Node-RED lit ce flux via un nœud <strong>Serial In</strong> et le découpe en messages individuels.
+</div>
+
+
+<h2 class="section" data-n="V">Flows Node-RED — traitement et routage des données</h2>
 
 <p>
   Node-RED constitue le cœur du système. Le flux de traitement d'une zone suit un pipeline
@@ -390,8 +437,8 @@ caption {
 <h3 class="subsection">Pipeline de traitement d'une zone</h3>
 
 <div class="pipeline">
-  <div class="step"><span class="n">①</span><span><strong>Serial In</strong> — réception des données Arduino via le port série</span></div>
-  <div class="step"><span class="n">②</span><span><strong>Function (parser)</strong> — extraction du topic (<code>temperature</code>, <code>soilHumidity</code>, <code>luminosity</code>, <code>insect</code>) et de la valeur numérique</span></div>
+  <div class="step"><span class="n">①</span><span><strong>Serial In</strong> — réception de la trame CSV depuis l'Arduino (9600 baud)</span></div>
+  <div class="step"><span class="n">②</span><span><strong>Function (parser CSV)</strong> — découpage de la chaîne <code>temp,hum_air,hum_sol,lum,bugs,dome,irr</code> et création de messages individuels avec les topics <code>temperature</code>, <code>soilHumidity</code>, <code>luminosity</code>, <code>insect</code></span></div>
   <div class="step"><span class="n">③</span><span><strong>InfluxDB in (bucket choix)</strong> — récupération de la plante actuellement sélectionnée pour cette zone</span></div>
   <div class="step"><span class="n">④</span><span><strong>Switch</strong> — routage du message vers le traitement correspondant au type de capteur</span></div>
   <div class="step"><span class="n">⑤</span><span><strong>InfluxDB in (bucket final)</strong> — lecture de la valeur idéale pour la plante choisie (température, humidité ou luminosité cibles)</span></div>
@@ -425,7 +472,7 @@ caption {
       <td>Notification + affichage du nom de l'insecte détecté</td>
     </tr>
   </tbody>
-  <caption>Table 3 — Traitement par type de capteur dans Node-RED</caption>
+  <caption>Table 5 — Traitement par type de capteur dans Node-RED</caption>
 </table>
 
 <div class="callout">
@@ -436,7 +483,7 @@ caption {
 </div>
 
 
-<h2 class="section" data-n="V">Base de données InfluxDB</h2>
+<h2 class="section" data-n="VI">Base de données InfluxDB</h2>
 
 <p>
   <strong>InfluxDB 2.0 Cloud</strong> est utilisé comme base de données time-series.
@@ -459,7 +506,7 @@ caption {
     <tr><td>Tag de zone</td><td><code>zone</code> (valeur : <em>zone1</em> → <em>zone4</em>)</td></tr>
     <tr><td>Données idéales par plante</td><td>température, humidité et luminosité cibles, insectes nuisibles recensés</td></tr>
   </tbody>
-  <caption>Table 4 — Structure du bucket <code>final</code></caption>
+  <caption>Table 6 — Structure du bucket <code>final</code></caption>
 </table>
 
 <h3 class="subsection">Bucket <code>choix</code> — sélection de plante par zone</h3>
@@ -476,7 +523,7 @@ caption {
     <tr><td>Field</td><td><code>value</code> — nom de la plante sélectionnée (ex. <em>Rosier</em>)</td></tr>
     <tr><td>Utilisation</td><td>Lu au démarrage de chaque zone pour initialiser les seuils de comparaison</td></tr>
   </tbody>
-  <caption>Table 5 — Structure du bucket <code>choix</code></caption>
+  <caption>Table 7 — Structure du bucket <code>choix</code></caption>
 </table>
 
 <div class="callout info">
@@ -488,7 +535,7 @@ caption {
 </div>
 
 
-<h2 class="section" data-n="VI">Dashboard et interface utilisateur</h2>
+<h2 class="section" data-n="VII">Dashboard et interface utilisateur</h2>
 
 <p>
   L'interface utilisateur est construite avec la palette <strong>node-red-dashboard</strong>.
@@ -510,7 +557,7 @@ caption {
     <tr><td>État des actionneurs</td><td><code>ui_text</code></td><td>Affichage textuel de l'état d'humidité, de luminosité, d'insectes et du dôme</td></tr>
     <tr><td>Données météo</td><td><code>ui_text</code>, <code>ui_gauge</code></td><td>Température, humidité et pression météo locales par zone</td></tr>
   </tbody>
-  <caption>Table 6 — Composants du dashboard Node-RED</caption>
+  <caption>Table 8 — Composants du dashboard Node-RED</caption>
 </table>
 
 <div class="callout">
@@ -522,7 +569,7 @@ caption {
 </div>
 
 
-<h2 class="section" data-n="VII">Intégration météo et contrôle du dôme</h2>
+<h2 class="section" data-n="VIII">Intégration météo et contrôle du dôme</h2>
 
 <p>
   Un flow dédié interroge périodiquement l'API <strong>OpenWeatherMap</strong> pour obtenir
@@ -547,7 +594,7 @@ caption {
     <tr><td>Peu nuageux (<em>few clouds</em>)</td><td>Ouvert</td></tr>
     <tr><td>Nuageux, pluie, orage, brouillard…</td><td>Fermé</td></tr>
   </tbody>
-  <caption>Table 7 — Logique de contrôle du dôme selon les conditions météo</caption>
+  <caption>Table 9 — Logique de contrôle du dôme selon les conditions météo</caption>
 </table>
 
 <p>
@@ -566,7 +613,7 @@ caption {
 </div>
 
 
-<h2 class="section" data-n="VIII">Conclusion et perspectives</h2>
+<h2 class="section" data-n="IX">Conclusion et perspectives</h2>
 
 <p>
   Ce projet démontre la faisabilité d'un système de serre agricole intelligente basé
@@ -601,7 +648,7 @@ caption {
     <tr><td>Caméra et vision artificielle</td><td>Détection visuelle des maladies foliaires et des insectes par traitement d'image (YOLOv8)</td></tr>
     <tr><td>Extension multi-serres</td><td>Déploiement sur plusieurs sites avec tableau de bord centralisé et Grafana</td></tr>
   </tbody>
-  <caption>Table 8 — Perspectives de développement du système</caption>
+  <caption>Table 10 — Perspectives de développement du système</caption>
 </table>
 
 <p>
