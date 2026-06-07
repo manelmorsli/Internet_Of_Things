@@ -1,628 +1,614 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Green House — Rapport de Projet IoT</title>
-  <style>
-    :root {
-      --green:       #2e7d32;
-      --green-light: #4caf50;
-      --green-pale:  #e8f5e9;
-      --dark:        #1a1a2e;
-      --text:        #333;
-      --card-bg:     #fff;
-      --border:      #c8e6c9;
-      --accent:      #00796b;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f9f4;
-      color: var(--text);
-      line-height: 1.6;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapport — Smart Green House · Serre Intelligente IoT</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
 
-    /* ── HERO ── */
-    header {
-      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #00796b 100%);
-      color: #fff;
-      padding: 60px 24px 48px;
-      text-align: center;
-    }
-    header .badge {
-      display: inline-block;
-      background: rgba(255,255,255,.15);
-      border: 1px solid rgba(255,255,255,.3);
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-size: .8rem;
-      letter-spacing: .05em;
-      margin-bottom: 18px;
-    }
-    header h1 { font-size: 2.4rem; font-weight: 700; margin-bottom: 10px; }
-    header p  { font-size: 1.1rem; opacity: .85; max-width: 580px; margin: 0 auto 28px; }
-    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    .tag {
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.35);
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: .82rem;
-    }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── LAYOUT ── */
-    main { max-width: 980px; margin: 0 auto; padding: 40px 20px 80px; }
-    section { margin-bottom: 52px; }
-    h2 {
-      font-size: 1.4rem;
-      color: var(--green);
-      border-left: 4px solid var(--green-light);
-      padding-left: 12px;
-      margin-bottom: 20px;
-    }
-    h3 { color: var(--accent); margin: 18px 0 8px; font-size: 1rem; }
-    p  { margin-bottom: 12px; }
-    code {
-      background: #f0f4f0;
-      border: 1px solid #dde;
-      border-radius: 4px;
-      padding: 1px 6px;
-      font-size: .85em;
-      font-family: 'Consolas', monospace;
-    }
+:root {
+  --ink:   #1a1a2e;
+  --muted: #5a5a7a;
+  --line:  #d8d8e8;
+  --accent:#8b5cf6;
+  --gold:  #b8860b;
+  --bg:    #fafaf8;
+  --card:  #f4f4f0;
+  --red:   #c0392b;
+  --blue:  #2563eb;
+  --green: #166534;
+}
 
-    /* ── CARDS ── */
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-    }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px 16px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,.05);
-    }
-    .card .icon  { font-size: 2rem; margin-bottom: 8px; }
-    .card .label { font-size: .85rem; color: #666; }
-    .card .value { font-size: 1.05rem; font-weight: 600; color: var(--dark); }
+html { font-size: 15px; }
 
-    /* ── ZONES ── */
-    .zone-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 14px;
-    }
-    .zone {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px;
-      border-top: 4px solid var(--green-light);
-    }
-    .zone h4 { color: var(--green); margin-bottom: 10px; font-size: 1rem; }
-    .zone ul  { padding-left: 18px; font-size: .9rem; color: #555; }
-    .zone li  { margin-bottom: 4px; }
-    .zone .plants {
-      margin-top: 10px;
-      font-size: .8rem;
-      color: #888;
-      font-style: italic;
-    }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Crimson Pro', Georgia, serif;
+  line-height: 1.75;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 3rem 2.5rem;
+}
 
-    /* ── TWO-COL ── */
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    @media (max-width: 620px) { .two-col { grid-template-columns: 1fr; } }
+@media print {
+  body { padding: 0; max-width: none; }
+  .no-print { display: none; }
+  .page-break { break-before: page; }
+  a { color: inherit; text-decoration: none; }
+}
 
-    /* ── INFO BOX ── */
-    .info-box {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 20px;
-    }
-    .info-box h4 { color: var(--green); margin-bottom: 10px; font-size: .95rem; font-weight: 700; }
-    .info-box ul  { padding-left: 18px; font-size: .9rem; color: #555; }
-    .info-box li  { margin-bottom: 5px; }
+/* ── COVER ── */
+.cover {
+  text-align: center;
+  padding: 4rem 2rem 5rem;
+  border-bottom: 3px solid var(--ink);
+  margin-bottom: 3rem;
+}
+.cover .univ {
+  font-family: 'Inter', sans-serif;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: .3rem;
+}
+.cover .module {
+  font-family: 'Inter', sans-serif;
+  font-size: .88rem;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+}
+.cover .title {
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: .6rem;
+}
+.cover .subtitle {
+  font-size: 1.3rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+}
+.cover .meta {
+  font-family: 'Inter', sans-serif;
+  font-size: .85rem;
+  color: var(--muted);
+  line-height: 1.9;
+}
+.cover .meta span { font-weight: 600; color: var(--ink); }
+.cover-rule { width: 60px; height: 3px; background: var(--gold); margin: 1.5rem auto; }
 
-    /* ── TECH TABLE ── */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--card-bg);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,.05);
-    }
-    th {
-      background: var(--green);
-      color: #fff;
-      padding: 12px 16px;
-      text-align: left;
-      font-weight: 600;
-    }
-    td { padding: 12px 16px; border-bottom: 1px solid #eee; font-size: .9rem; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--green-pale); }
+/* ── TOC ── */
+.toc { margin-bottom: 3rem; }
+.toc h2 { font-family: 'Inter', sans-serif; font-size: 1rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 1rem; }
+.toc ol { list-style: none; padding: 0; }
+.toc li { display: flex; justify-content: space-between; padding: .35rem 0; border-bottom: 1px dotted var(--line); font-size: .95rem; }
+.toc li .num { color: var(--muted); min-width: 2rem; }
+.toc li .page { color: var(--muted); font-family: 'Inter', sans-serif; font-size: .82rem; }
+.toc-part { font-weight: 700; margin-top: .6rem; }
+.toc-sub { padding-left: 1.5rem; font-style: italic; }
 
-    /* ── FLOW DIAGRAM ── */
-    .flow {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 24px;
-      overflow-x: auto;
-    }
-    .flow-row {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-      gap: 0;
-    }
-    .flow-box {
-      background: var(--green-pale);
-      border: 1.5px solid var(--green);
-      border-radius: 7px;
-      padding: 7px 14px;
-      font-size: .82rem;
-      font-weight: 600;
-      color: var(--green);
-      white-space: nowrap;
-    }
-    .flow-box.orange { background: #fff3e0; border-color: #f57c00; color: #e65100; }
-    .flow-box.blue   { background: #e3f2fd; border-color: #1565c0; color: #0d47a1; }
-    .flow-box.teal   { background: #e0f2f1; border-color: #00796b; color: #004d40; }
-    .flow-box.red    { background: #fce4ec; border-color: #c62828; color: #b71c1c; }
-    .arrow { padding: 0 8px; color: #999; font-size: 1.1rem; }
-    .branch-block {
-      padding-left: 24px;
-      border-left: 2px dashed #c8e6c9;
-      margin: 6px 0 6px 80px;
-    }
+/* ── HEADINGS ── */
+h1.part-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -.3px;
+  border-top: 3px solid var(--ink);
+  border-bottom: 1px solid var(--line);
+  padding: .7rem 0;
+  margin: 2.5rem 0 1.5rem;
+}
+h2.section {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 2rem 0 .8rem;
+  color: var(--ink);
+}
+h2.section::before {
+  content: attr(data-n) '. ';
+  color: var(--muted);
+}
+h2.section[data-n=""]::before { content: ''; }
+h3.subsection {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.5rem 0 .6rem;
+  color: var(--ink);
+}
 
-    /* ── SETUP STEPS ── */
-    .steps { }
-    .step {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 22px;
-      align-items: flex-start;
-    }
-    .step-num {
-      background: var(--green);
-      color: #fff;
-      min-width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: .9rem;
-      flex-shrink: 0;
-    }
-    .step-content h4 { margin-bottom: 4px; color: var(--dark); }
-    .step-content p  { font-size: .9rem; color: #555; margin: 0 0 6px; }
+/* ── BODY TEXT ── */
+p { margin-bottom: 1rem; font-size: 1rem; text-align: justify; }
+p + p { text-indent: 1.5em; }
+strong { font-weight: 700; }
+em { font-style: italic; }
+code {
+  font-family: 'Consolas', monospace;
+  font-size: .82em;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
 
-    /* ── CODE BLOCK ── */
-    pre {
-      background: #263238;
-      color: #aed581;
-      border-radius: 8px;
-      padding: 16px;
-      font-size: .82rem;
-      overflow-x: auto;
-      margin: 8px 0;
-      font-family: 'Consolas', monospace;
-    }
+/* ── TABLES ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2rem 0;
+  font-family: 'Inter', sans-serif;
+  font-size: .82rem;
+}
+th {
+  background: var(--ink);
+  color: #fff;
+  text-align: left;
+  padding: .55rem .8rem;
+  font-weight: 600;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+td { padding: .5rem .8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:nth-child(even) td { background: var(--card); }
+caption {
+  font-family: 'Inter', sans-serif;
+  font-size: .8rem;
+  color: var(--muted);
+  text-align: left;
+  padding: .3rem 0;
+  caption-side: bottom;
+}
 
-    /* ── ALERT ── */
-    .alert {
-      background: #fff3e0;
-      border-left: 4px solid #f57c00;
-      border-radius: 6px;
-      padding: 14px 16px;
-      font-size: .9rem;
-      margin-bottom: 22px;
-    }
+/* ── CALLOUTS ── */
+.callout {
+  border-left: 4px solid var(--gold);
+  background: #fefce8;
+  padding: .9rem 1.2rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.2rem 0;
+  font-size: .92rem;
+}
+.callout.info   { border-color: var(--blue);  background: #eff6ff; }
+.callout.def    { border-color: var(--green); background: #f0fdf4; }
+.callout.result { border-color: var(--red);   background: #fff5f5; }
+.callout .callout-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: .4rem;
+  color: var(--muted);
+}
 
-    /* ── FOOTER ── */
-    footer {
-      background: var(--dark);
-      color: rgba(255,255,255,.6);
-      text-align: center;
-      padding: 28px;
-      font-size: .85rem;
-    }
-  </style>
+/* ── METRICS ROW ── */
+.metrics-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .8rem;
+  margin: 1.2rem 0;
+}
+.metric-box {
+  flex: 1 1 130px;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--gold);
+  background: var(--card);
+  border-radius: 0 0 4px 4px;
+  padding: .8rem 1rem;
+  text-align: center;
+}
+.metric-box .val {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink);
+  display: block;
+}
+.metric-box .lbl {
+  font-family: 'Inter', sans-serif;
+  font-size: .72rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ── PIPELINE STEPS ── */
+.pipeline {
+  font-family: 'Inter', sans-serif;
+  font-size: .83rem;
+  line-height: 1.8;
+  background: var(--card);
+  padding: 1.2rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  border: 1px solid var(--line);
+}
+.pipeline .step { display: flex; gap: .8rem; margin-bottom: .3rem; }
+.pipeline .step .n { color: var(--gold); font-weight: 700; min-width: 1.6rem; }
+
+/* ── BIBLIO ── */
+.biblio { margin-left: 1.5rem; }
+.biblio li { margin-bottom: .6rem; font-size: .92rem; }
+
+.page-num { font-family: 'Inter', sans-serif; font-size: .75rem; color: var(--muted); }
+</style>
 </head>
 <body>
 
-<!-- ════════════════════ HERO ════════════════════ -->
-<header>
-  <div class="badge">Rapport de Projet IoT — Node-RED · Arduino · InfluxDB</div>
-  <h1>Smart Green House</h1>
-  <p>Serre agricole intelligente automatisée avec surveillance multi-zones, gestion des plantes et intégration météo en temps réel</p>
-  <div class="tag-row">
-    <span class="tag">Node-RED</span>
-    <span class="tag">Arduino</span>
-    <span class="tag">InfluxDB 2.0 Cloud</span>
-    <span class="tag">OpenWeatherMap</span>
-    <span class="tag">4 Zones indépendantes</span>
-    <span class="tag">Dashboard UI</span>
-    <span class="tag">Tizi-Ouzou, Algérie</span>
+<!-- ══════════════════════════════════════════════════════
+     COVER
+══════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="univ">Université Mouloud Mammeri de Tizi-Ouzou</div>
+  <div class="univ" style="letter-spacing:1px;margin-bottom:.2rem">Faculté de Génie Électrique et d'Informatique · Département Informatique</div>
+  <div class="module">Licence / Master — Internet des Objets · 2023–2024</div>
+  <div class="cover-rule"></div>
+  <div class="title">Smart Green House</div>
+  <div class="subtitle">Serre agricole intelligente automatisée<br>avec surveillance multi-zones en temps réel</div>
+  <div class="cover-rule"></div>
+  <div class="meta">
+    Réalisé par : <span>MORSLI Manel</span><br>
+    Technologies : <span>Node-RED · Arduino · InfluxDB 2.0 · OpenWeatherMap</span><br>
+    Localisation : <span>Tizi-Ouzou, Algérie</span>
   </div>
-</header>
+</div>
 
-<main>
 
-  <!-- ════════════════════ APERÇU ════════════════════ -->
-  <section>
-    <h2>Aperçu du projet</h2>
-    <p>
-      Ce projet réalise une <strong>serre agricole intelligente</strong> divisée en <strong>4 zones indépendantes</strong>.
-      Chaque zone est équipée de capteurs connectés à un Arduino qui transmettent leurs mesures via port série à Node-RED.
-      Le système compare les données en temps réel aux valeurs idéales stockées dans InfluxDB pour la plante sélectionnée,
-      puis déclenche automatiquement les actionneurs (thermostat, pompe, éclairage).
-    </p>
-    <p>
-      Une intégration avec l'API <strong>OpenWeatherMap</strong> surveille les conditions météorologiques locales
-      (Tizi-Ouzou, Algérie) et contrôle automatiquement l'ouverture du dôme de la serre :
-      il s'ouvre par temps dégagé ou peu nuageux, et se ferme dans tous les autres cas.
-    </p>
+<!-- ══════════════════════════════════════════════════════
+     TABLE DES MATIÈRES
+══════════════════════════════════════════════════════ -->
+<div class="toc">
+  <h2>Table des matières</h2>
+  <ol>
+    <li class="toc-part"><span class="num"></span><span>Partie I — Présentation et architecture</span><span class="page">2</span></li>
+    <li class="toc-sub"><span class="num">I.</span><span>Introduction et objectifs</span><span class="page">2</span></li>
+    <li class="toc-sub"><span class="num">II.</span><span>Architecture générale du système</span><span class="page">3</span></li>
+    <li class="toc-sub"><span class="num">III.</span><span>Les 4 zones de la serre</span><span class="page">4</span></li>
+    <li class="toc-part" style="margin-top:.8rem"><span class="num"></span><span>Partie II — Implémentation</span><span class="page">5</span></li>
+    <li class="toc-sub"><span class="num">IV.</span><span>Flows Node-RED — traitement des capteurs</span><span class="page">5</span></li>
+    <li class="toc-sub"><span class="num">V.</span><span>Base de données InfluxDB</span><span class="page">7</span></li>
+    <li class="toc-sub"><span class="num">VI.</span><span>Dashboard et interface utilisateur</span><span class="page">8</span></li>
+    <li class="toc-sub"><span class="num">VII.</span><span>Intégration météo et contrôle du dôme</span><span class="page">9</span></li>
+    <li class="toc-sub"><span class="num">VIII.</span><span>Conclusion et perspectives</span><span class="page">10</span></li>
+  </ol>
+</div>
 
-    <div class="card-grid" style="margin-top:24px">
-      <div class="card">
-        <div class="icon">🌿</div>
-        <div class="value">4 Zones</div>
-        <div class="label">capteurs indépendants</div>
-      </div>
-      <div class="card">
-        <div class="icon">📡</div>
-        <div class="value">4 Capteurs</div>
-        <div class="label">temp · humidité · lumière · insectes</div>
-      </div>
-      <div class="card">
-        <div class="icon">⚡</div>
-        <div class="value">Temps réel</div>
-        <div class="label">traitement & actionneurs automatiques</div>
-      </div>
-      <div class="card">
-        <div class="icon">🌤</div>
-        <div class="value">Météo</div>
-        <div class="label">contrôle dôme automatique</div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ════════════════════ ZONES ════════════════════ -->
-  <section>
-    <h2>Les 4 Zones de la Serre</h2>
-    <div class="zone-grid">
-      <div class="zone">
-        <h4>Zone 1</h4>
-        <ul>
-          <li>Température → Thermostat</li>
-          <li>Humidité du sol → Pompe</li>
-          <li>Luminosité → Éclairage</li>
-          <li>Détection d'insectes → Alerte</li>
-        </ul>
-        <div class="plants">Légumes / Fruits</div>
-      </div>
-      <div class="zone">
-        <h4>Zone 2</h4>
-        <ul>
-          <li>Température → Thermostat</li>
-          <li>Humidité du sol → Pompe</li>
-          <li>Luminosité → Éclairage</li>
-          <li>Détection d'insectes → Alerte</li>
-        </ul>
-        <div class="plants">Légumes / Fruits</div>
-      </div>
-      <div class="zone">
-        <h4>Zone 3</h4>
-        <ul>
-          <li>Température → Thermostat</li>
-          <li>Humidité du sol → Pompe</li>
-          <li>Luminosité → Éclairage</li>
-          <li>Détection d'insectes → Alerte</li>
-        </ul>
-        <div class="plants">Rosier · Fuchsia · Pissenlit · Lavande</div>
-      </div>
-      <div class="zone">
-        <h4>Zone 4</h4>
-        <ul>
-          <li>Température → Thermostat</li>
-          <li>Humidité du sol → Pompe</li>
-          <li>Luminosité → Éclairage</li>
-          <li>Détection d'insectes → Alerte</li>
-        </ul>
-        <div class="plants">Légumes / Fruits</div>
-      </div>
-    </div>
-    <p style="margin-top:16px; font-size:.9rem; color:#555;">
-      Dans chaque zone, l'utilisateur sélectionne la plante cultivée via un menu déroulant sur le dashboard.
-      Les seuils idéaux (température, humidité, luminosité, insectes nuisibles) sont récupérés depuis
-      InfluxDB pour cette plante, ce qui permet d'adapter les actionneurs à chaque culture.
-    </p>
+<!-- ══════════════════════════════════════════════════════
+     PARTIE I
+══════════════════════════════════════════════════════ -->
+<h1 class="part-title page-break">Partie I — Présentation et architecture</h1>
 
-    <!-- Insectes + Dashboard -->
-    <div class="two-col" style="margin-top:20px">
-      <div class="info-box">
-        <h4>Insectes nuisibles détectés</h4>
-        <ul>
-          <li><strong>Puceron</strong> — insecte suceur de sève</li>
-          <li><strong>Punaise</strong> — ravageur des cultures</li>
-          <li><strong>Limace</strong> — gastéropode dévorant les feuilles</li>
-        </ul>
-        <p style="margin-top:10px; font-size:.82rem; color:#777;">
-          En cas de détection, une notification est envoyée et le nom de l'insecte est affiché sur le dashboard.
-        </p>
-      </div>
-      <div class="info-box">
-        <h4>Dashboard Node-RED</h4>
-        <ul>
-          <li>Thermostat interactif style Nest (SVG)</li>
-          <li>Jauge humidité type <em>wave</em></li>
-          <li>Jauge pression type <em>donut</em></li>
-          <li>Jauge température type <em>compass</em></li>
-          <li>Graphiques linéaires temps réel</li>
-          <li>Affichage état dôme + météo</li>
-          <li>Menu déroulant sélection de plante</li>
-        </ul>
-      </div>
-    </div>
-  </section>
+<h2 class="section" data-n="I">Introduction et objectifs</h2>
 
-  <!-- ════════════════════ ARCHITECTURE ════════════════════ -->
-  <section>
-    <h2>Architecture des Flows Node-RED</h2>
-    <div class="flow">
+<p>
+  Ce projet s'inscrit dans le domaine de l'<strong>Internet des Objets</strong> (IoT) appliqué à l'agriculture intelligente.
+  L'objectif est de concevoir et d'implémenter une <strong>serre agricole automatisée</strong> capable de surveiller
+  en temps réel les conditions environnementales de plusieurs zones de culture, et d'agir automatiquement
+  sur les actionneurs en fonction des besoins de chaque plante.
+</p>
 
-      <h3>Flow capteurs — une zone (× 4)</h3>
-      <div class="flow-row">
-        <div class="flow-box blue">Arduino (capteurs)</div>
-        <span class="arrow">→</span>
-        <div class="flow-box blue">Serial In</div>
-        <span class="arrow">→</span>
-        <div class="flow-box">Parser : topic + valeur</div>
-        <span class="arrow">→</span>
-        <div class="flow-box">Switch (routing)</div>
-      </div>
+<p>
+  Le système repose sur une architecture entièrement logicielle pilotée par <strong>Node-RED</strong>,
+  avec des microcontrôleurs Arduino comme couche de perception, une base de données
+  <strong>InfluxDB 2.0 Cloud</strong> pour le stockage et la référence des données idéales,
+  et l'API <strong>OpenWeatherMap</strong> pour la prise en compte des conditions météorologiques extérieures.
+</p>
 
-      <div class="branch-block">
-        <div class="flow-row">
-          <div class="flow-box orange">Température</div>
-          <span class="arrow">→</span>
-          <div class="flow-box teal">InfluxDB — temp idéale</div>
-          <span class="arrow">→</span>
-          <div class="flow-box">Comparaison → Thermostat UI</div>
-        </div>
-        <div class="flow-row">
-          <div class="flow-box orange">Humidité sol</div>
-          <span class="arrow">→</span>
-          <div class="flow-box teal">InfluxDB — humidité idéale</div>
-          <span class="arrow">→</span>
-          <div class="flow-box">Comparaison → Pompe + Jauge</div>
-        </div>
-        <div class="flow-row">
-          <div class="flow-box orange">Luminosité</div>
-          <span class="arrow">→</span>
-          <div class="flow-box teal">InfluxDB — luminosité idéale</div>
-          <span class="arrow">→</span>
-          <div class="flow-box">Comparaison → Éclairage</div>
-        </div>
-        <div class="flow-row">
-          <div class="flow-box orange">Insectes</div>
-          <span class="arrow">→</span>
-          <div class="flow-box teal">InfluxDB — insectes nuisibles</div>
-          <span class="arrow">→</span>
-          <div class="flow-box red">Alerte + Notification</div>
-        </div>
-      </div>
+<div class="callout def">
+  <div class="callout-title">Problématique</div>
+  Comment surveiller et automatiser la gestion d'une serre multi-zones avec des besoins différents
+  par type de plante, tout en intégrant les données météorologiques extérieures pour une gestion
+  globale de l'environnement de culture ?
+</div>
 
-      <p style="font-size:.83rem; color:#777; margin: 8px 0 18px 0;">
-        Les données brutes sont aussi écrites dans le bucket <code>final</code> (InfluxDB) et affichées
-        simultanément en graphiques temps réel sur le dashboard.
-      </p>
+<div class="metrics-row">
+  <div class="metric-box"><span class="val">4</span><span class="lbl">zones indépendantes<br>de culture</span></div>
+  <div class="metric-box"><span class="val">4</span><span class="lbl">types de capteurs<br>par zone</span></div>
+  <div class="metric-box"><span class="val">3</span><span class="lbl">actionneurs<br>automatiques</span></div>
+  <div class="metric-box"><span class="val">2</span><span class="lbl">buckets InfluxDB<br>dédiés</span></div>
+</div>
 
-      <h3>Flow météo — contrôle du dôme</h3>
-      <div class="flow-row">
-        <div class="flow-box blue">Inject (timer)</div>
-        <span class="arrow">→</span>
-        <div class="flow-box blue">OpenWeatherMap API</div>
-        <span class="arrow">→</span>
-        <div class="flow-box orange">Conditions météo</div>
-        <span class="arrow">→</span>
-        <div class="flow-box">Dôme ouvert si dégagé / peu nuageux</div>
-      </div>
 
-      <h3 style="margin-top:18px">Flow sélection de plante</h3>
-      <div class="flow-row">
-        <div class="flow-box blue">Dropdown (plante)</div>
-        <span class="arrow">→</span>
-        <div class="flow-box teal">InfluxDB out — bucket choix</div>
-      </div>
-      <div class="flow-row" style="margin-top:6px">
-        <div class="flow-box blue">Serial In (capteur)</div>
-        <span class="arrow">→</span>
-        <div class="flow-box teal">InfluxDB in — bucket choix</div>
-        <span class="arrow">→</span>
-        <div class="flow-box">Récupère la plante choisie → routing</div>
-      </div>
-    </div>
-  </section>
+<h2 class="section" data-n="II">Architecture générale du système</h2>
 
-  <!-- ════════════════════ INFLUXDB ════════════════════ -->
-  <section>
-    <h2>Organisation des données InfluxDB</h2>
-    <div class="two-col">
-      <div class="info-box">
-        <h4>Bucket : <code>final</code></h4>
-        <ul>
-          <li>Measurement : <code>maSerre</code></li>
-          <li>Fields : <code>temp</code>, <code>humidity</code>, <code>luminosity</code></li>
-          <li>Fields : <code>insectOne</code>, <code>insectTwo</code></li>
-          <li>Tag : <code>zone</code> (zone1 → zone4)</li>
-          <li>Valeurs idéales par type de plante</li>
-        </ul>
-      </div>
-      <div class="info-box">
-        <h4>Bucket : <code>choix</code></h4>
-        <ul>
-          <li>Measurement : <code>choix_zone1</code> … <code>choix_zone4</code></li>
-          <li>Field : <code>value</code> (nom de la plante sélectionnée)</li>
-          <li>Persistance du choix de plante entre les sessions</li>
-        </ul>
-      </div>
-    </div>
-  </section>
+<p>
+  Le système est organisé en trois couches distinctes : la couche <strong>perception</strong> (Arduino + capteurs),
+  la couche <strong>traitement</strong> (Node-RED) et la couche <strong>données</strong> (InfluxDB Cloud).
+  L'ensemble est piloté depuis un tableau de bord accessible via navigateur.
+</p>
 
-  <!-- ════════════════════ STACK ════════════════════ -->
-  <section>
-    <h2>Stack Technique</h2>
-    <table>
-      <thead>
-        <tr><th>Composant</th><th>Technologie</th><th>Rôle</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Orchestration</td>
-          <td><strong>Node-RED</strong></td>
-          <td>Traitement des flows, logique métier, dashboard</td>
-        </tr>
-        <tr>
-          <td>Base de données</td>
-          <td><strong>InfluxDB 2.0 Cloud</strong></td>
-          <td>Stockage time-series, valeurs idéales, choix plantes (2 buckets)</td>
-        </tr>
-        <tr>
-          <td>Microcontrôleur</td>
-          <td><strong>Arduino</strong></td>
-          <td>Lecture capteurs, envoi via port série (format <code>topic:valeur\n</code>)</td>
-        </tr>
-        <tr>
-          <td>API météo</td>
-          <td><strong>OpenWeatherMap</strong></td>
-          <td>Données météo locales pour contrôle automatique du dôme</td>
-        </tr>
-        <tr>
-          <td>Dashboard</td>
-          <td><strong>node-red-dashboard</strong></td>
-          <td>Thermostat SVG (Nest-like), jauges wave/donut/compass, graphiques linéaires</td>
-        </tr>
-        <tr>
-          <td>Palette InfluxDB</td>
-          <td><strong>node-red-contrib-influxdb</strong></td>
-          <td>Noeuds <code>influxdb in</code> / <code>influxdb out</code> pour lecture/écriture</td>
-        </tr>
-        <tr>
-          <td>Palette météo</td>
-          <td><strong>node-red-node-openweathermap</strong></td>
-          <td>Noeud de requête API OpenWeatherMap intégré à Node-RED</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+<table>
+  <thead><tr><th>Couche</th><th>Composant</th><th>Rôle</th></tr></thead>
+  <tbody>
+    <tr><td>Perception</td><td><strong>Arduino</strong></td><td>Lecture des capteurs, envoi série au format <code>topic:valeur\n</code></td></tr>
+    <tr><td>Traitement</td><td><strong>Node-RED</strong></td><td>Parsing, logique métier, comparaison aux valeurs idéales, pilotage des actionneurs</td></tr>
+    <tr><td>Données</td><td><strong>InfluxDB 2.0 Cloud</strong></td><td>Stockage time-series des mesures et des valeurs idéales par plante</td></tr>
+    <tr><td>Météo</td><td><strong>OpenWeatherMap API</strong></td><td>Données météo locales pour le contrôle du dôme</td></tr>
+    <tr><td>Visualisation</td><td><strong>Node-RED Dashboard</strong></td><td>Interface utilisateur avec jauges, graphiques et thermostat interactif</td></tr>
+  </tbody>
+  <caption>Table 1 — Architecture en couches du système Smart Green House</caption>
+</table>
 
-  <!-- ════════════════════ INSTALLATION ════════════════════ -->
-  <section>
-    <h2>Installation et Configuration</h2>
+<div class="callout info">
+  <div class="callout-title">Protocole de communication Arduino → Node-RED</div>
+  Chaque Arduino envoie ses mesures via le port série sous la forme <code>topic:valeur\n</code>.
+  Exemples : <code>temperature:23\n</code>, <code>soilHumidity:65\n</code>, <code>luminosity:7000\n</code>, <code>insect:1\n</code>.
+  Node-RED parse ce format grâce à un nœud <em>function</em> qui extrait le topic et la valeur numérique.
+</div>
 
-    <div class="alert">
-      Les clés API et tokens ne sont <strong>pas inclus</strong> dans ce dépôt.
-      Vous devez configurer vos propres credentials après import des flows.
-    </div>
 
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-content">
-          <h4>Installer Node-RED et les palettes</h4>
-          <p>Node.js requis. Installer les palettes depuis le gestionnaire de Node-RED :</p>
-          <pre>node-red-dashboard
-node-red-node-openweathermap
-node-red-contrib-influxdb</pre>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-content">
-          <h4>Importer les flows</h4>
-          <p>Dans Node-RED : Menu (☰) → Import → coller le contenu de <code>greenhouse-main-flows.json</code></p>
-          <p>Pour la zone 1 modifiée, importer aussi <code>greenhouse-zone1-flows.json</code></p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-content">
-          <h4>Configurer InfluxDB</h4>
-          <p>Double-cliquer sur n'importe quel noeud InfluxDB → modifier la configuration <em>Smart Green House</em> :</p>
-          <pre>URL    : https://votre-instance.influxdata.com
-Token  : YOUR_INFLUXDB_TOKEN
-Org    : YOUR_INFLUXDB_ORG
-Bucket : final   (données capteurs)
-Bucket : choix   (sélection de plantes)</pre>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-content">
-          <h4>Pré-remplir les valeurs idéales dans InfluxDB</h4>
-          <p>
-            Écrire dans le bucket <code>final</code>, measurement <code>maSerre</code>, les valeurs idéales
-            pour chaque plante et chaque zone (température, humidité, luminosité, insectes nuisibles).
-          </p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-content">
-          <h4>Configurer OpenWeatherMap</h4>
-          <p>Double-cliquer sur le noeud <code>weather</code> → entrer votre clé API et la ville souhaitée.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">6</div>
-        <div class="step-content">
-          <h4>Connecter l'Arduino</h4>
-          <p>
-            Configurer les noeuds <code>serial in</code> avec le bon port COM.
-            L'Arduino envoie les données au format <code>topic:valeur\n</code>
-            (ex : <code>temperature:23\n</code>, <code>soilHumidity:65\n</code>).
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+<h2 class="section" data-n="III">Les 4 zones de la serre</h2>
 
-  <!-- ════════════════════ STRUCTURE ════════════════════ -->
-  <section>
-    <h2>Structure du dépôt</h2>
-    <pre>Internet_Of_Things/
-├── greenhouse-main-flows.json    # Flows Node-RED principaux (4 zones + météo)
-├── greenhouse-zone1-flows.json   # Flow zone 1 (version modifiée)
-├── project-report.pdf            # Rapport complet du projet
-├── iot-project-report.html       # Cette page
-├── README.md                     # Documentation GitHub
-└── .gitignore                    # Exclut les fichiers secrets</pre>
-  </section>
+<p>
+  La serre est divisée en <strong>4 zones indépendantes</strong>, chacune dotée de son propre Arduino
+  et de ses capteurs. Chaque zone peut héberger un type de plante différent, sélectionné par
+  l'utilisateur depuis le tableau de bord. Les seuils de déclenchement des actionneurs sont
+  adaptés en temps réel à la plante choisie grâce aux données stockées dans InfluxDB.
+</p>
 
-</main>
+<table>
+  <thead><tr><th>Zone</th><th>Capteurs</th><th>Actionneurs</th><th>Plantes disponibles (ex. Zone 3)</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Zone 1</strong></td><td>Température, humidité sol, luminosité, insectes</td><td>Thermostat, pompe à eau, éclairage</td><td>Légumes / Fruits</td></tr>
+    <tr><td><strong>Zone 2</strong></td><td>Température, humidité sol, luminosité, insectes</td><td>Thermostat, pompe à eau, éclairage</td><td>Légumes / Fruits</td></tr>
+    <tr><td><strong>Zone 3</strong></td><td>Température, humidité sol, luminosité, insectes</td><td>Thermostat, pompe à eau, éclairage</td><td>Rosier · Fuchsia · Pissenlit · Lavande</td></tr>
+    <tr><td><strong>Zone 4</strong></td><td>Température, humidité sol, luminosité, insectes</td><td>Thermostat, pompe à eau, éclairage</td><td>Légumes / Fruits</td></tr>
+  </tbody>
+  <caption>Table 2 — Récapitulatif des zones de la serre</caption>
+</table>
 
-<!-- ════════════════════ FOOTER ════════════════════ -->
-<footer>
-  <p>Smart Green House — Projet IoT &nbsp;|&nbsp; Node-RED · Arduino · InfluxDB 2.0 · OpenWeatherMap</p>
-  <p style="margin-top:6px; font-size:.8rem;">Université · Département Informatique &amp; Réseaux · Tizi-Ouzou, Algérie</p>
-</footer>
+<p>
+  La détection d'insectes couvre trois espèces nuisibles identifiées par un index numérique
+  envoyé par l'Arduino et converti en nom par Node-RED :
+  le <strong>puceron</strong> (0), la <strong>punaise</strong> (1) et la <strong>limace</strong> (2).
+  En cas de détection, une notification est envoyée et l'insecte identifié est affiché sur le dashboard.
+</p>
+
+
+<!-- ══════════════════════════════════════════════════════
+     PARTIE II
+══════════════════════════════════════════════════════ -->
+<h1 class="part-title page-break">Partie II — Implémentation</h1>
+
+<h2 class="section" data-n="IV">Flows Node-RED — traitement des capteurs</h2>
+
+<p>
+  Node-RED constitue le cœur du système. Le flux de traitement d'une zone suit un pipeline
+  linéaire depuis la réception des données série jusqu'au déclenchement des actionneurs.
+  Le même principe est reproduit pour les 4 zones.
+</p>
+
+<h3 class="subsection">Pipeline de traitement d'une zone</h3>
+
+<div class="pipeline">
+  <div class="step"><span class="n">①</span><span><strong>Serial In</strong> — réception des données Arduino via le port série</span></div>
+  <div class="step"><span class="n">②</span><span><strong>Function (parser)</strong> — extraction du topic (<code>temperature</code>, <code>soilHumidity</code>, <code>luminosity</code>, <code>insect</code>) et de la valeur numérique</span></div>
+  <div class="step"><span class="n">③</span><span><strong>InfluxDB in (bucket choix)</strong> — récupération de la plante actuellement sélectionnée pour cette zone</span></div>
+  <div class="step"><span class="n">④</span><span><strong>Switch</strong> — routage du message vers le traitement correspondant au type de capteur</span></div>
+  <div class="step"><span class="n">⑤</span><span><strong>InfluxDB in (bucket final)</strong> — lecture de la valeur idéale pour la plante choisie (température, humidité ou luminosité cibles)</span></div>
+  <div class="step"><span class="n">⑥</span><span><strong>Function (comparaison)</strong> — comparaison mesure / valeur idéale → décision d'activation de l'actionneur</span></div>
+  <div class="step"><span class="n">⑦</span><span><strong>Dashboard + Actionneurs</strong> — affichage de l'état et déclenchement du thermostat, de la pompe ou de l'éclairage</span></div>
+</div>
+
+<h3 class="subsection">Traitement par type de capteur</h3>
+
+<table>
+  <thead><tr><th>Capteur</th><th>Traitement Node-RED</th><th>Action déclenchée</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Température</strong></td>
+      <td>Comparaison à la temp. idéale InfluxDB → état <em>heating</em> / <em>cooling</em> / <em>off</em></td>
+      <td>Thermostat interactif (style Nest) mis à jour en temps réel</td>
+    </tr>
+    <tr>
+      <td><strong>Humidité sol</strong></td>
+      <td>Comparaison à l'humidité idéale InfluxDB → message d'état</td>
+      <td>Activation de la pompe à eau si humidité insuffisante</td>
+    </tr>
+    <tr>
+      <td><strong>Luminosité</strong></td>
+      <td>Comparaison à la luminosité idéale InfluxDB → message d'état</td>
+      <td>Activation de l'éclairage si luminosité insuffisante</td>
+    </tr>
+    <tr>
+      <td><strong>Insectes</strong></td>
+      <td>Conversion index → nom d'insecte ; comparaison aux nuisibles connus dans InfluxDB</td>
+      <td>Notification + affichage du nom de l'insecte détecté</td>
+    </tr>
+  </tbody>
+  <caption>Table 3 — Traitement par type de capteur dans Node-RED</caption>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Nœuds Inject pour les tests</div>
+  Des nœuds <em>Inject</em> simulant des données série (ex. <code>temperature:15\n</code>,
+  <code>soilHumidity:65\n</code>) sont inclus dans les flows pour permettre de tester
+  l'écriture dans InfluxDB et le déclenchement des actionneurs sans avoir l'Arduino connecté.
+</div>
+
+
+<h2 class="section" data-n="V">Base de données InfluxDB</h2>
+
+<p>
+  <strong>InfluxDB 2.0 Cloud</strong> est utilisé comme base de données time-series.
+  Deux buckets distincts structurent le stockage des données du projet.
+</p>
+
+<h3 class="subsection">Bucket <code>final</code> — données capteurs et valeurs idéales</h3>
+<p>
+  Ce bucket centralise toutes les données de la serre. Il contient à la fois les
+  <strong>mesures en temps réel</strong> remontées par les Arduinos et les
+  <strong>valeurs idéales de référence</strong> par type de plante, utilisées
+  pour décider du déclenchement des actionneurs.
+</p>
+
+<table>
+  <thead><tr><th>Paramètre</th><th>Valeur</th></tr></thead>
+  <tbody>
+    <tr><td>Measurement principal</td><td><code>maSerre</code></td></tr>
+    <tr><td>Fields capteurs</td><td><code>temp</code>, <code>humidity</code>, <code>luminosity</code>, <code>insectOne</code>, <code>insectTwo</code></td></tr>
+    <tr><td>Tag de zone</td><td><code>zone</code> (valeur : <em>zone1</em> → <em>zone4</em>)</td></tr>
+    <tr><td>Données idéales par plante</td><td>température, humidité et luminosité cibles, insectes nuisibles recensés</td></tr>
+  </tbody>
+  <caption>Table 4 — Structure du bucket <code>final</code></caption>
+</table>
+
+<h3 class="subsection">Bucket <code>choix</code> — sélection de plante par zone</h3>
+<p>
+  Ce bucket stocke le choix de plante effectué par l'utilisateur dans le dashboard.
+  Cela permet de <strong>persister la sélection</strong> entre les sessions et de la
+  retrouver au démarrage du système, même après redémarrage de Node-RED.
+</p>
+
+<table>
+  <thead><tr><th>Paramètre</th><th>Valeur</th></tr></thead>
+  <tbody>
+    <tr><td>Measurements</td><td><code>choix_zone1</code>, <code>choix_zone2</code>, <code>choix_zone3</code>, <code>choix_zone4</code></td></tr>
+    <tr><td>Field</td><td><code>value</code> — nom de la plante sélectionnée (ex. <em>Rosier</em>)</td></tr>
+    <tr><td>Utilisation</td><td>Lu au démarrage de chaque zone pour initialiser les seuils de comparaison</td></tr>
+  </tbody>
+  <caption>Table 5 — Structure du bucket <code>choix</code></caption>
+</table>
+
+<div class="callout info">
+  <div class="callout-title">Requêtes Flux (InfluxDB 2.0)</div>
+  Toutes les lectures sont effectuées avec le langage <strong>Flux</strong> via des nœuds
+  <code>influxdb in</code>. Exemple pour lire la température idéale :
+  <code>from(bucket:"final") |&gt; range(...) |&gt; filter(fn: (r) =&gt; r["_field"] == "temp")</code>.
+  Les résultats sont ensuite filtrés côté Node-RED par zone et par plante sélectionnée.
+</div>
+
+
+<h2 class="section" data-n="VI">Dashboard et interface utilisateur</h2>
+
+<p>
+  L'interface utilisateur est construite avec la palette <strong>node-red-dashboard</strong>.
+  Elle est organisée par onglets de zones et offre une vue complète de l'état de la serre
+  en temps réel, avec des contrôles interactifs.
+</p>
+
+<h3 class="subsection">Composants du dashboard</h3>
+
+<table>
+  <thead><tr><th>Composant</th><th>Type de nœud</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Thermostat interactif</td><td><code>ui_template</code> (SVG)</td><td>Thermostat style Nest draggable ; affiche temp. ambiante vs. cible ; états <em>heating</em> / <em>cooling</em> / <em>off</em> avec couleurs distinctes (orange / bleu / gris)</td></tr>
+    <tr><td>Jauge humidité du sol</td><td><code>ui_gauge</code> type <em>wave</em></td><td>Affichage en vague animée ; couleur variable selon le niveau d'humidité</td></tr>
+    <tr><td>Jauge pression atmosphérique</td><td><code>ui_gauge</code> type <em>donut</em></td><td>Segments colorés pour les différentes plages de pression</td></tr>
+    <tr><td>Jauge température</td><td><code>ui_gauge</code> type <em>compass</em></td><td>Représentation en boussole avec plages de températures colorées</td></tr>
+    <tr><td>Graphiques temps réel</td><td><code>ui_chart</code> type <em>line</em></td><td>Courbes évolutives pour température, humidité du sol et luminosité</td></tr>
+    <tr><td>Sélection de plante</td><td><code>ui_dropdown</code></td><td>Menu déroulant par zone ; la sélection déclenche la mise à jour des seuils</td></tr>
+    <tr><td>État des actionneurs</td><td><code>ui_text</code></td><td>Affichage textuel de l'état d'humidité, de luminosité, d'insectes et du dôme</td></tr>
+    <tr><td>Données météo</td><td><code>ui_text</code>, <code>ui_gauge</code></td><td>Température, humidité et pression météo locales par zone</td></tr>
+  </tbody>
+  <caption>Table 6 — Composants du dashboard Node-RED</caption>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Thermostat SVG — implémentation</div>
+  Le thermostat est implémenté via un nœud <code>ui_template</code> contenant du JavaScript SVG
+  (librairie <em>thermostatDial</em>). Il est entièrement interactif : l'utilisateur peut
+  faire glisser la cible de température, et le système met à jour en temps réel l'état
+  HVAC (heating/cooling/off) ainsi que les variables globales Node-RED correspondantes.
+</div>
+
+
+<h2 class="section" data-n="VII">Intégration météo et contrôle du dôme</h2>
+
+<p>
+  Un flow dédié interroge périodiquement l'API <strong>OpenWeatherMap</strong> pour obtenir
+  les conditions météorologiques actuelles autour de la serre (Tizi-Ouzou, Algérie).
+  Ces données servent à piloter automatiquement l'ouverture du dôme de la serre.
+</p>
+
+<h3 class="subsection">Logique de contrôle du dôme</h3>
+
+<div class="pipeline">
+  <div class="step"><span class="n">①</span><span><strong>Inject (timer)</strong> — déclenchement périodique de la requête météo</span></div>
+  <div class="step"><span class="n">②</span><span><strong>Function 30</strong> — construction de la requête avec la ville et le pays depuis les variables globales</span></div>
+  <div class="step"><span class="n">③</span><span><strong>Nœud OpenWeatherMap</strong> — appel API, retourne les conditions météo actuelles</span></div>
+  <div class="step"><span class="n">④</span><span><strong>Function Open/close Dome</strong> — décision d'ouverture selon les conditions reçues</span></div>
+  <div class="step"><span class="n">⑤</span><span><strong>ui_text (dome)</strong> — affichage de l'état du dôme sur le dashboard de chaque zone</span></div>
+</div>
+
+<table>
+  <thead><tr><th>Condition météo</th><th>État du dôme</th></tr></thead>
+  <tbody>
+    <tr><td>Ciel dégagé (<em>clear sky</em>)</td><td>Ouvert</td></tr>
+    <tr><td>Peu nuageux (<em>few clouds</em>)</td><td>Ouvert</td></tr>
+    <tr><td>Nuageux, pluie, orage, brouillard…</td><td>Fermé</td></tr>
+  </tbody>
+  <caption>Table 7 — Logique de contrôle du dôme selon les conditions météo</caption>
+</table>
+
+<p>
+  Les informations météo affichées dans le dashboard comprennent également la température extérieure,
+  l'humidité atmosphérique, la pression et les détails de la condition (via le nœud <code>ui_text</code>
+  "Meteo de cette zone"). Un menu déroulant "Zone" permet de choisir la zone géographique
+  pour laquelle les données météo sont affichées.
+</p>
+
+<div class="callout result">
+  <div class="callout-title">Limitation identifiée</div>
+  La clé API OpenWeatherMap est stockée dans les credentials Node-RED (fichier séparé, non versionné).
+  Elle n'apparaît pas dans les fichiers JSON des flows exportés.
+  Toute personne souhaitant réutiliser ce projet doit générer sa propre clé sur
+  <strong>openweathermap.org</strong> (plan gratuit suffisant pour cet usage).
+</div>
+
+
+<h2 class="section" data-n="VIII">Conclusion et perspectives</h2>
+
+<p>
+  Ce projet démontre la faisabilité d'un système de serre agricole intelligente basé
+  sur des technologies open source et cloud, avec un coût de déploiement faible.
+  L'architecture Node-RED offre une grande flexibilité pour ajouter de nouvelles zones
+  ou de nouveaux types de capteurs sans réécrire le système.
+</p>
+
+<p>
+  La persistance du choix de plante via InfluxDB et la comparaison dynamique aux valeurs
+  idéales constituent les points forts de l'implémentation, permettant une vraie
+  personnalisation par culture et par zone.
+</p>
+
+<div class="callout result">
+  <div class="callout-title">Limites actuelles</div>
+  (1) Les valeurs idéales doivent être pré-remplies manuellement dans InfluxDB.
+  (2) L'Arduino envoie des données en série — une coupure de connexion arrête la surveillance.
+  (3) Le dataset d'insectes nuisibles est limité à 3 espèces.
+  (4) Pas de persistance des états des actionneurs après redémarrage de Node-RED.
+</div>
+
+<h3 class="subsection">Perspectives de développement</h3>
+
+<table>
+  <thead><tr><th>Axe</th><th>Actions envisagées</th></tr></thead>
+  <tbody>
+    <tr><td>Communication sans fil</td><td>Remplacement du port série par MQTT ou WiFi (ESP8266 / ESP32) pour éliminer la contrainte de câblage</td></tr>
+    <tr><td>Enrichissement des capteurs</td><td>Ajout de capteurs CO₂, pH du sol, débit d'eau pour un contrôle plus fin</td></tr>
+    <tr><td>Machine Learning local</td><td>Modèle de prédiction des besoins en arrosage basé sur l'historique InfluxDB</td></tr>
+    <tr><td>Application mobile</td><td>Interface mobile (React Native ou Flutter) pour la surveillance à distance avec notifications push</td></tr>
+    <tr><td>Caméra et vision artificielle</td><td>Détection visuelle des maladies foliaires et des insectes par traitement d'image (YOLOv8)</td></tr>
+    <tr><td>Extension multi-serres</td><td>Déploiement sur plusieurs sites avec tableau de bord centralisé et Grafana</td></tr>
+  </tbody>
+  <caption>Table 8 — Perspectives de développement du système</caption>
+</table>
+
+<p>
+  En conclusion, ce projet constitue une base solide pour une agriculture de précision
+  accessible, combinant les technologies IoT, cloud et visualisation temps réel dans
+  un système cohérent et extensible.
+</p>
 
 </body>
 </html>
